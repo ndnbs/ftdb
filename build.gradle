@@ -33,16 +33,18 @@ dependencies {
 jar {
   manifest {
     attributes(
-      'Main-Class': 'org.h2.tools.Server'
+      'Main-Class': 'com.github.ndnbs.ftdb.MainFTDB'
     )
   }
 }
 
 /*
       'Main-Class': 'org.h2.tools.Server'
+      'Main-Class': 'com.github.ndnbs.ftdb.MainFTDB'
 */
 
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
 }
+
