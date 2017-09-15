@@ -1,6 +1,11 @@
 .gradle
 /build/
 
+#####
+# Ignore any H2 dbs here
+#####
+support/db/*.db
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

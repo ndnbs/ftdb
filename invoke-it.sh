@@ -1,7 +1,8 @@
 #!/bin/bash -x
 
-LANG=C java -jar build/libs/ftdb-all.jar -help
+LANG=C java -jar build/libs/ftdb-all.jar 
 
+#LANG=C java -jar build/libs/ftdb-all.jar -help
 
 #LANG=C java -jar build/libs/ftdb-all.jar \
 # -web -webAllowOthers -webPort 8082 \
