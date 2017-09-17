@@ -54,6 +54,6 @@ sql>
 #####
 # Can use the H2 "Server" like this. Notice, with the all-inclusive JAR, the -cp switches work out nicely.
 #####
-C:\data\git-work\ftdb>java -cp build\libs\ftdb-all.jar org.h2.tools.Server -web -baseDir support\db -browser
+C:\data\git-work\ftdb>java -cp build\libs\ftdb-all.jar org.h2.tools.Server -web -browser
 Web Console server running at http://192.168.14.104:8082 (only local connections)
 
