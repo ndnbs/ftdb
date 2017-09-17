@@ -26,16 +26,32 @@ public class MainFTDB {
          conn = DriverManager.getConnection(DB_URL,USER,PASS);  
          
          //STEP 3: Execute a query 
-         System.out.println("Creating STATUS table in given database..."); 
+         System.out.println("Creating [overall_status] table in given database..."); 
          stmt = conn.createStatement(); 
-         String sql =  "CREATE TABLE   STATUS " + 
-            "(id INTEGER not NULL, " + 
-            " symbol VARCHAR(255), " +  
-            " exchange VARCHAR(255), " +  
-            " portfolio INTEGER, " +  
+         String sql =  "CREATE TABLE overall_status " + 
+            "(id INTEGER NOT NULL, " + 
+            " l_delta_dt TIMESTAMP NOT NULL, " +  
+            " port INTEGER NOT NULL, " +  
+            " symb VARCHAR(255) NOT NULL, " +  
+            " exch VARCHAR(255) NOT NULL, " +  
+            " stat VARCHAR(255) NOT NULL, " +  
+            " pvom DECIMAL(20,2) NOT NULL, " +  
+            " o_date DATE NOT NULL, " +  
+            " o_amt DECIMAL(20,2) NOT NULL, " +  
+            " o_pri DECIMAL(20,2) NOT NULL, " +  
+            " s_date DATE NOT NULL, " +  
+            " s_amt DECIMAL(20,2) NOT NULL, " +  
+            " s_pri DECIMAL(20,2) NOT NULL, " +  
+            " l_pri DECIMAL(20,2) NOT NULL, " +  
+            " l_pri_dt TIMESTAMP NOT NULL, " +  
+            " l_pri_mech VARCHAR(255) NOT NULL, " +  
+            " r0001_v VARCHAR(255) NOT NULL, " +  
+            " r0001_dt TIMESTAMP NOT NULL, " +  
+            " r0002_v VARCHAR(255) NOT NULL, " +  
+            " r0002_dt TIMESTAMP NOT NULL, " +  
             " PRIMARY KEY ( id ))";  
          stmt.executeUpdate(sql);
-         System.out.println("Created STATUS table in given database..."); 
+         System.out.println("Created [overall_status] table in given database..."); 
          
          // STEP 4: Clean-up environment 
          stmt.close(); 

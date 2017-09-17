@@ -1,4 +1,6 @@
 REM ###########################
-REM build-it.bat
+REM remove-dbs.bat
 REM ###########################
-gradlew shadowJar
+
+del support\db\ftdb.*.db
+
