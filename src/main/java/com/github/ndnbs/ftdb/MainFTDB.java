@@ -8,15 +8,63 @@ import java.sql.Statement;
 public class MainFTDB { 
    // JDBC driver name and database URL 
    static final String JDBC_DRIVER = "org.h2.Driver";   
-   static final String DB_URL = "jdbc:h2:./support/db/ftdb";  
+   static final String DB_URL      = "jdbc:h2:./support/db/ftdb";  
    
    //  Database credentials 
    static final String USER = "sa"; 
    static final String PASS = ""; 
-  
+ 
+   /**************************************************************************/
    public static void main(String[] args) { 
+
+      String logMsg;
+
+      // Ensure that exactly one(1) mode is passed in of the three(3) allowable modes. 
+      // Because of "short-circuit" behavior, the following works out nicely.
+      if ((args.length != 1) || (!(args[0].equals("create") || args[0].equals("populate") || args[0].equals("start")))) {
+
+         logMsg = String.format("Valid Mode NOT specified. Valid Modes are: [%s]", "create | populate | start");
+         System.out.println(logMsg);
+         System.exit(1);
+      }
+
+      logMsg = String.format("Mode is: [%s]", args[0]);
+      System.out.println(logMsg);
+
+      switch(args[0]) {
+
+        case "create":
+          CreateFTDB();
+          break;
+
+        case "populate":
+         logMsg = String.format("Mode: [%s] not implemented yet.", args[0]);
+         System.out.println(logMsg);
+          break;
+
+        case "start":
+         logMsg = String.format("Mode: [%s] not implemented yet.", args[0]);
+         System.out.println(logMsg);
+          break;
+
+        default:
+         logMsg = String.format("Should never happen, but here for code maintainability");
+         System.out.println(logMsg);
+         System.exit(1);
+      }
+
+      System.exit(0);
+   } 
+   /**************************************************************************/
+   private static void CreateFTDB() { 
+
+      String logMsg;
+
+      logMsg = String.format("In CreateFTDB");
+      System.out.println(logMsg);
+
       Connection conn = null; 
-      Statement stmt = null; 
+      Statement stmt  = null; 
       try { 
          // STEP 1: Register JDBC driver 
          Class.forName(JDBC_DRIVER); 
@@ -76,4 +124,5 @@ public class MainFTDB {
       } //end try 
       System.out.println("Goodbye!");
    } 
+   /**************************************************************************/
 }
