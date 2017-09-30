@@ -2,6 +2,7 @@ package com.github.ndnbs.ftdb;
 
 import java.sql.Connection; 
 import java.sql.DriverManager; 
+import java.sql.ResultSet; 
 import java.sql.SQLException; 
 import java.sql.Statement;  
 
@@ -21,12 +22,13 @@ public class MainFTDB {
 
       // Ensure that exactly one(1) mode is passed in of the three(3) allowable modes. 
       // Because of "short-circuit" behavior, the following works out nicely.
-      if ((args.length != 1) || (!(args[0].equals("create") || args[0].equals("output") || 
-                                   args[0].equals("populate") || args[0].equals("start")))) 
+      if ((args.length != 1) || (!(args[0].equals("create") || args[0].equals("dump_all") || 
+                                   args[0].equals("dump_1") || args[0].equals("populate") || 
+                                   args[0].equals("start")))) 
       {
 
          logMsg = String.format("Valid Mode NOT specified. Valid Modes are: [%s]", 
-                                 "create | output | populate | start");
+                                 "create | dump_all | dump_1 | populate | start");
          System.out.println(logMsg);
          System.exit(1);
       }
@@ -40,9 +42,13 @@ public class MainFTDB {
           CreateFTDB();
           break;
 
-        case "output":
+        case "dump_all":
          logMsg = String.format("Mode: [%s] not implemented yet.", args[0]);
          System.out.println(logMsg);
+          break;
+
+        case "dump_1":
+          DumpOne();
           break;
 
         case "populate":
@@ -85,22 +91,22 @@ public class MainFTDB {
          stmt = conn.createStatement(); 
          String sql =  "CREATE TABLE os " + 
             "(id IDENTITY, " + 
-            " create_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
-            " delta_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
+            " c_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
+            " d_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
             " port INTEGER NOT NULL, " +  
             " symb VARCHAR(255) NOT NULL, " +  
             " exch VARCHAR(255) NOT NULL, " +  
-            " status CHAR(1) NOT NULL DEFAULT 'H', " +  
-            " pvm DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " o_date DATE NOT NULL DEFAULT TODAY, " +  
-            " o_amt DECIMAL(20,2) NOT NULL, " +  
-            " o_pri DECIMAL(20,2) NOT NULL, " +  
-            " s_date DATE NOT NULL DEFAULT TODAY, " +  
-            " s_amt DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " s_pri DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " l_pri DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " l_pri_dt TIMESTAMP NOT NULL DEFAULT TODAY, " +  
-            " l_pri_mech CHAR(6) NOT NULL DEFAULT 'MANUAL', " +  
+            " stat CHAR(1) NOT NULL DEFAULT 'H', " +  
+            " pvom DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            " o_d DATE NOT NULL DEFAULT TODAY, " +  
+            " o_a DECIMAL(20,2) NOT NULL, " +  
+            " o_p DECIMAL(20,2) NOT NULL, " +  
+            " s_d DATE NOT NULL DEFAULT TODAY, " +  
+            " s_a DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            " s_p DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            " l_p DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            " l_p_dt TIMESTAMP NOT NULL DEFAULT TODAY, " +  
+            " l_p_mech CHAR(6) NOT NULL DEFAULT 'MANUAL', " +  
             " r0001_v CHAR(1) NOT NULL DEFAULT 'N', " +  
             " r0001_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
             " r0002_v CHAR(1) NOT NULL DEFAULT 'N', " +  
@@ -132,6 +138,75 @@ public class MainFTDB {
          } //end finally try 
       } //end try 
       System.out.println("Goodbye!");
+   } 
+   /**************************************************************************/
+   private static void DumpOne() {
+
+      String logMsg;
+
+      logMsg = String.format("In DumpOne");
+      System.out.println(logMsg);
+
+      Connection conn = null; 
+      Statement stmt  = null; 
+      try { 
+         // STEP 1: Register JDBC driver 
+         Class.forName(JDBC_DRIVER); 
+         
+         // STEP 2: Open a connection 
+         System.out.println("Connecting to database..."); 
+         conn = DriverManager.getConnection(DB_URL,USER,PASS);  
+         
+         // STEP 3: Execute a query 
+         System.out.println("Connected database successfully..."); 
+         stmt = conn.createStatement(); 
+
+         String header = "ID  PORT  SYMB       EXCH       S    O_A      O_P   O_D        C_DT";
+         System.out.println(header); 
+
+         String sql = "SELECT id, c_dt, port, symb, exch, stat, o_d, o_a, o_p  FROM os"; 
+         ResultSet rs = stmt.executeQuery(sql); 
+         
+         // STEP 4: Extract data from result set 
+         while(rs.next()) { 
+            // Retrieve by column name 
+            int id      = rs.getInt("id"); 
+            String c_dt = rs.getString("c_dt"); 
+            int port    = rs.getInt("port"); 
+            String symb = rs.getString("symb"); 
+            String exch = rs.getString("exch"); 
+            String stat = rs.getString("stat"); 
+            String o_d  = rs.getString("o_d"); 
+            String o_a  = rs.getString("o_a"); 
+            String o_p  = rs.getString("o_p"); 
+
+            String out_str = String.format("%03d %04d  %-10s %-10s %s %8s %8s %s %s", 
+                                           id, port, symb, exch, stat, o_a, o_p, o_d, c_dt); 
+            // Display values 
+            System.out.println(out_str); 
+         } 
+         // STEP 5: Clean-up environment 
+         rs.close(); 
+      } catch(SQLException se) { 
+         // Handle errors for JDBC 
+         se.printStackTrace(); 
+      } catch(Exception e) { 
+         // Handle errors for Class.forName 
+         e.printStackTrace(); 
+      } finally { 
+         // finally block used to close resources 
+         try { 
+            if(stmt!=null) stmt.close();  
+         } catch(SQLException se2) { 
+         } // nothing we can do 
+         try { 
+            if(conn!=null) conn.close(); 
+         } catch(SQLException se) { 
+            se.printStackTrace(); 
+         } // end finally try 
+      } // end try 
+      System.out.println("Goodbye!"); 
+
    } 
    /**************************************************************************/
    private static void PopulateFTDB() { 
@@ -206,3 +281,4 @@ public class MainFTDB {
    }
    /**************************************************************************/
 }
+
