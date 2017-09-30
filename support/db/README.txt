@@ -25,28 +25,10 @@ autocommit     Enable or disable autocommit
 history        Show the last 20 statements
 quit or exit   Close the connection and exit
 
-sql> show columns from overall_status;
+sql> show columns from os;
 FIELD      | TYPE          | NULL | KEY | DEFAULT
 ID         | INTEGER(10)   | NO   | PRI | NULL
-L_DELTA_DT | TIMESTAMP(23) | NO   |     | NULL
-PORT       | INTEGER(10)   | NO   |     | NULL
-SYMB       | VARCHAR(255)  | NO   |     | NULL
-EXCH       | VARCHAR(255)  | NO   |     | NULL
-STAT       | VARCHAR(255)  | NO   |     | NULL
-PVOM       | DECIMAL(20)   | NO   |     | NULL
-O_DATE     | DATE(8)       | NO   |     | NULL
-O_AMT      | DECIMAL(20)   | NO   |     | NULL
-O_PRI      | DECIMAL(20)   | NO   |     | NULL
-S_DATE     | DATE(8)       | NO   |     | NULL
-S_AMT      | DECIMAL(20)   | NO   |     | NULL
-S_PRI      | DECIMAL(20)   | NO   |     | NULL
-L_PRI      | DECIMAL(20)   | NO   |     | NULL
-L_PRI_DT   | TIMESTAMP(23) | NO   |     | NULL
-L_PRI_MECH | VARCHAR(255)  | NO   |     | NULL
-R0001_V    | VARCHAR(255)  | NO   |     | NULL
-R0001_DT   | TIMESTAMP(23) | NO   |     | NULL
-R0002_V    | VARCHAR(255)  | NO   |     | NULL
-R0002_DT   | TIMESTAMP(23) | NO   |     | NULL
+........
 (20 rows, 88 ms)
 sql>
 
@@ -56,4 +38,39 @@ sql>
 #####
 C:\data\git-work\ftdb>java -cp build\libs\ftdb-all.jar org.h2.tools.Server -web -browser
 Web Console server running at http://192.168.14.104:8082 (only local connections)
+
+
+C:\data\git-work\ftdb>java -cp build\libs\ftdb-all.jar org.h2.tools.Server -help
+Starts the H2 Console (web-) server, TCP, and PG server.
+Usage: java org.h2.tools.Server <options>
+When running without options, -tcp, -web, -browser and -pg are started.
+Options are case sensitive. Supported options are:
+[-help] or [-?]         Print the list of options
+[-web]                  Start the web server with the H2 Console
+[-webAllowOthers]       Allow other computers to connect - see below
+[-webDaemon]            Use a daemon thread
+[-webPort <port>]       The port (default: 8082)
+[-webSSL]               Use encrypted (HTTPS) connections
+[-browser]              Start a browser connecting to the web server
+[-tcp]                  Start the TCP server
+[-tcpAllowOthers]       Allow other computers to connect - see below
+[-tcpDaemon]            Use a daemon thread
+[-tcpPort <port>]       The port (default: 9092)
+[-tcpSSL]               Use encrypted (SSL) connections
+[-tcpPassword <pwd>]    The password for shutting down a TCP server
+[-tcpShutdown "<url>"]  Stop the TCP server; example: tcp://localhost
+[-tcpShutdownForce]     Do not wait until all connections are closed
+[-pg]                   Start the PG server
+[-pgAllowOthers]        Allow other computers to connect - see below
+[-pgDaemon]             Use a daemon thread
+[-pgPort <port>]        The port (default: 5435)
+[-properties "<dir>"]   Server properties (default: ~, disable: null)
+[-baseDir <dir>]        The base directory for H2 databases (all servers)
+[-ifExists]             Only existing databases may be opened (all servers)
+[-trace]                Print additional trace information (all servers)
+[-key <from> <to>]      Allows to map a database name to another (all servers)
+The options -xAllowOthers are potentially risky.
+For details, see Advanced Topics / Protection against Remote Access.
+See also http://h2database.com/javadoc/org/h2/tools/Server.html
+
 
