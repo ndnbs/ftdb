@@ -20,15 +20,15 @@ public class MainFTDB {
 
       String logMsg;
 
-      // Ensure that exactly one(1) mode is passed in of the three(3) allowable modes. 
+      // Ensure that exactly one(1) mode is passed in of the allowable modes. 
       // Because of "short-circuit" behavior, the following works out nicely.
-      if ((args.length != 1) || (!(args[0].equals("create") || args[0].equals("dump_all") || 
-                                   args[0].equals("dump_1") || args[0].equals("populate") || 
+      if ((args.length != 1) || (!(args[0].equals("create") || args[0].equals("dump") || 
+                                   args[0].equals("populate") || 
                                    args[0].equals("start")))) 
       {
 
          logMsg = String.format("Valid Mode NOT specified. Valid Modes are: [%s]", 
-                                 "create | dump_all | dump_1 | populate | start");
+                                 "create | dump | populate | start");
          System.out.println(logMsg);
          System.exit(1);
       }
@@ -42,13 +42,8 @@ public class MainFTDB {
           CreateFTDB();
           break;
 
-        case "dump_all":
-         logMsg = String.format("Mode: [%s] not implemented yet.", args[0]);
-         System.out.println(logMsg);
-          break;
-
-        case "dump_1":
-          DumpOne();
+        case "dump":
+          DumpFTDB();
           break;
 
         case "populate":
@@ -89,28 +84,29 @@ public class MainFTDB {
          //STEP 3: Execute a query 
          System.out.println("Creating [os] table in given database..."); 
          stmt = conn.createStatement(); 
-         String sql =  "CREATE TABLE os " + 
-            "(id IDENTITY, " + 
-            " c_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
-            " d_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
-            " port INTEGER NOT NULL, " +  
-            " symb VARCHAR(255) NOT NULL, " +  
-            " exch VARCHAR(255) NOT NULL, " +  
-            " stat CHAR(1) NOT NULL DEFAULT 'H', " +  
-            " pvom DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " o_d DATE NOT NULL DEFAULT TODAY, " +  
-            " o_a DECIMAL(20,2) NOT NULL, " +  
-            " o_p DECIMAL(20,2) NOT NULL, " +  
-            " s_d DATE NOT NULL DEFAULT TODAY, " +  
-            " s_a DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " s_p DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " l_p DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
-            " l_p_dt TIMESTAMP NOT NULL DEFAULT TODAY, " +  
-            " l_p_mech CHAR(6) NOT NULL DEFAULT 'MANUAL', " +  
-            " r0001_v CHAR(1) NOT NULL DEFAULT 'N', " +  
-            " r0001_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
-            " r0002_v CHAR(1) NOT NULL DEFAULT 'N', " +  
-            " r0002_dt TIMESTAMP NOT NULL DEFAULT NOW(0)" +  
+         String sql =  
+            "CREATE TABLE os (" + 
+            "id IDENTITY, " + 
+            "c_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
+            "d_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
+            "port INTEGER NOT NULL, " +  
+            "symb VARCHAR(255) NOT NULL, " +  
+            "exch VARCHAR(255) NOT NULL, " +  
+            "stat CHAR(1) NOT NULL DEFAULT 'H', " +  
+            "pvom DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            "o_d DATE NOT NULL DEFAULT TODAY, " +  
+            "o_a DECIMAL(20,2) NOT NULL, " +  
+            "o_p DECIMAL(20,2) NOT NULL, " +  
+            "s_d DATE NOT NULL DEFAULT TODAY, " +  
+            "s_a DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            "s_p DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            "l_p DECIMAL(20,2) NOT NULL DEFAULT 0.00, " +  
+            "l_p_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
+            "l_p_mech CHAR(6) NOT NULL DEFAULT 'MANUAL', " +  
+            "r0001_v CHAR(1) NOT NULL DEFAULT 'N', " +  
+            "r0001_dt TIMESTAMP NOT NULL DEFAULT NOW(0), " +  
+            "r0002_v CHAR(1) NOT NULL DEFAULT 'N', " +  
+            "r0002_dt TIMESTAMP NOT NULL DEFAULT NOW(0)" +  
             ")";  
 
          stmt.executeUpdate(sql);
@@ -137,14 +133,14 @@ public class MainFTDB {
             se.printStackTrace(); 
          } //end finally try 
       } //end try 
-      System.out.println("Goodbye!");
    } 
    /**************************************************************************/
-   private static void DumpOne() {
+   private static void DumpFTDB() {
 
       String logMsg;
+      String sql;
 
-      logMsg = String.format("In DumpOne");
+      logMsg = String.format("In DumpFTDB");
       System.out.println(logMsg);
 
       Connection conn = null; 
@@ -164,7 +160,15 @@ public class MainFTDB {
          String header = "ID  PORT  SYMB       EXCH       S    O_A      O_P   O_D        C_DT";
          System.out.println(header); 
 
-         String sql = "SELECT id, c_dt, port, symb, exch, stat, o_d, o_a, o_p  FROM os"; 
+         // Below, we are going to SELECT all fields even if we are not displaying 
+         // them further down. We want to keep this SELECT complete and in synch
+         // with the CREATION.
+         sql  = "SELECT "; 
+         sql += "id, c_dt, port, symb, exch, stat, pvom, o_d, o_a, o_p, ";
+         sql += "s_d, s_a, s_p, l_p, l_p_dt, l_p_mech, r0001_v, r0001_dt, "; 
+         sql += "r0002_v, r0002_dt "; 
+         sql += "FROM os"; 
+
          ResultSet rs = stmt.executeQuery(sql); 
          
          // STEP 4: Extract data from result set 
@@ -205,8 +209,6 @@ public class MainFTDB {
             se.printStackTrace(); 
          } // end finally try 
       } // end try 
-      System.out.println("Goodbye!"); 
-
    } 
    /**************************************************************************/
    private static void PopulateFTDB() { 
@@ -276,8 +278,6 @@ public class MainFTDB {
             se.printStackTrace(); 
          } // end finally try 
       } // end try 
-      System.out.println("Goodbye!"); 
-
    }
    /**************************************************************************/
 }

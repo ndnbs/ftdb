@@ -6,6 +6,6 @@ java -jar build\libs\ftdb-all.jar create
 
 java -jar build\libs\ftdb-all.jar populate 
 
-java -jar build\libs\ftdb-all.jar dump_1
+java -jar build\libs\ftdb-all.jar dump
 
 
