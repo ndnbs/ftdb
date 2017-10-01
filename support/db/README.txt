@@ -5,6 +5,10 @@ Home of any H2 DBs used
 #####
 C:\data\git-work\ftdb>java -cp build\libs\ftdb-all.jar org.h2.tools.Shell
 
+NOTE: A remote connection may look something like this:
+
+   jdbc:h2:tcp://192.168.14.184:9092/C:/data/git-work/ftdb/support/db/ftdb
+	
 Welcome to H2 Shell 1.4.196 (2017-06-10)
 Exit with Ctrl+C
 [Enter]   jdbc:h2:./support/db/ftdb

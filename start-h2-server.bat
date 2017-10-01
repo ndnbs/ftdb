@@ -1,5 +1,5 @@
 
-java -cp build\libs\ftdb-all.jar org.h2.tools.Server -baseDir .\support\db -tcp
+java -cp build\libs\ftdb-all.jar org.h2.tools.Server -baseDir .\support\db -tcp -tcpAllowOthers -web -webAllowOthers
 
 exit
 
